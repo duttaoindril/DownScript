@@ -7,7 +7,7 @@ const Downloader = require("mt-files-downloader");
 const getDuration = require("get-video-duration");
 const ignore = args[3] ? args[3] : 0;
 let browserDownloads = [[], [], null, false];
-var watcher = chokidar.watch("C:/Users/dutta/Downloads/*.mp4", { persistent: true });
+var watcher = chokidar.watch("C:/Users/[REPLACE WITH YOUR OWN COMPUTER USER]/Downloads/*.mp4", { persistent: true });
 
 // node index.js [url] [season #] "[title (optional)]" [# to ignore from beginning (optional)]
 
@@ -18,9 +18,9 @@ let getDownloadURLs = async target => {
     await tab.goto("http://kissanime.ru/login");
     await tab.waitFor(13000);
     await tab.click("#username");
-    await tab.keyboard.type("dadrill");
+    await tab.keyboard.type("[REPLACE WITH YOUR OWN LOGIN]");
     await tab.click("#password");
-    await tab.keyboard.type("anasua21");
+    await tab.keyboard.type("[REPLACE WITH YOUR OWN PASSWORD]");
     await tab.click("#btnSubmit");
     await tab.waitFor(2000);
     tab = await browser.newPage();
@@ -70,9 +70,11 @@ getDownloadURLs(args[0]).then(async links => {
             let episodeNum = parseInt(link.substring(link.indexOf("Episode-") + "Episode-".length, link.indexOf("?", link.indexOf("Episode-"))));
             links[2].push(isNaN(episodeNum) ? links[0].indexOf(link) + 1 : episodeNum);
         }
-        ensureDirectoryExistence("C:/Users/dutta/Downloads/KissAnime/" + name + "/Season " + season + "/" + name + " links.json");
+        ensureDirectoryExistence(
+            "C:/Users/[REPLACE WITH YOUR OWN COMPUTER USER]/Downloads/KissAnime/" + name + "/Season " + season + "/" + name + " links.json"
+        );
         fs.writeFile(
-            "C:/Users/dutta/Downloads/KissAnime/" + name + "/Season " + season + "/" + name + " links.json",
+            "C:/Users/[REPLACE WITH YOUR OWN COMPUTER USER]/Downloads/KissAnime/" + name + "/Season " + season + "/" + name + " links.json",
             JSON.stringify({ name: name, season: season, links: links, ignore: ignore }, null, 4),
             e => console.log(e ? e : "")
         );
@@ -101,7 +103,17 @@ async function browserDownload(useBackup, name, s, e, link, cb) {
         console.log("Using backup on episode " + e + "...\n\nDownloading " + link + " on browser...\n\n");
         browserDownloads[0].push(link);
         browserDownloads[1].push(
-            "C:/Users/dutta/Downloads/KissAnime/" + name + "/Season " + s + "/" + name + " S0" + s + "E" + (e < 10 ? "0" + e : e) + ".mp4"
+            "C:/Users/[REPLACE WITH YOUR OWN COMPUTER USER]/Downloads/KissAnime/" +
+                name +
+                "/Season " +
+                s +
+                "/" +
+                name +
+                " S0" +
+                s +
+                "E" +
+                (e < 10 ? "0" + e : e) +
+                ".mp4"
         );
         browserDownloads[3] = true;
         let tab = await browserDownloads[2].newPage();
@@ -113,11 +125,13 @@ async function browserDownload(useBackup, name, s, e, link, cb) {
 watcher.on("add", path => {
     getDuration(path)
         .then(duration => {
-            var index = browserDownloads[0].findIndex(val => val.includes(path.substring("C:\\Users\\dutta\\Downloads\\".length)));
+            var index = browserDownloads[0].findIndex(val =>
+                val.includes(path.substring("C:\\Users\\[REPLACE WITH YOUR OWN COMPUTER USER]\\Downloads\\".length))
+            );
             if (index > -1) {
                 if (fs.existsSync(browserDownloads[1][index])) fs.unlinkSync(browserDownloads[1][index], err => console.log(err ? err : ""));
                 var renamed = browserDownloads[1][index] + ".tmp";
-                // "C:\\Users\\dutta\\Downloads\\" + browserDownloads[1][index].substring(browserDownloads[1][index].lastIndexOf("//") + 2);
+                // "C:\\Users\\[REPLACE WITH YOUR OWN COMPUTER USER]\\Downloads\\" + browserDownloads[1][index].substring(browserDownloads[1][index].lastIndexOf("//") + 2);
                 console.log("\nRenaming temporarily to:", renamed);
                 fs.rename(path, renamed, err => {
                     fs.rename(renamed, browserDownloads[1][index], err => {
@@ -147,7 +161,18 @@ async function checkCleanupBrowser(val) {
 
 function download(name, s, e, url, cb, threads = 100) {
     var totalTime = Date.now();
-    let filePath = "C:/Users/dutta/Downloads/KissAnime/" + name + "/Season " + s + "/" + name + " S0" + s + "E" + (e < 10 ? "0" + e : e) + ".mp4";
+    let filePath =
+        "C:/Users/[REPLACE WITH YOUR OWN COMPUTER USER]/Downloads/KissAnime/" +
+        name +
+        "/Season " +
+        s +
+        "/" +
+        name +
+        " S0" +
+        s +
+        "E" +
+        (e < 10 ? "0" + e : e) +
+        ".mp4";
     ensureDirectoryExistence(filePath);
     let dler = new Downloader();
     let dl = dler.download(url, filePath);
